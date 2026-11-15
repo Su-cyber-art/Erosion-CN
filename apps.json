@@ -1,12 +1,50 @@
 {
   "name": "Erosion Plus",
   "identifier": "io.github.su-cyber-art.ErosionPlus.source",
-  "subtitle": "Erosion Plus 独立版更新源",
-  "description": "独立安装版；首次发布 ErosionPlus IPA 后由工作流生成应用版本列表。",
+  "subtitle": "Erosion Plus 独立版更新源 (SideStore / AltStore / Feather)",
+  "description": "Erosion Plus 是基于 Erosion-CN 的中英双语独立应用，可与原版并存安装。\n\n• MobileGestalt 编辑、备份恢复、文件浏览与诊断\n• 应用启动图与通知铃声定制，含配对和通知路径采集\n• 新增 MG 预设及原值恢复\n\n重签时保留独立 Bundle ID 和 App Group 权限。两款应用修改的系统配置仍是同一份。\n\nErosion Plus is a bilingual standalone fork of Erosion-CN with GestaltX feature ports. Keep its distinct bundle identifier and App Group entitlement when signing.",
   "iconURL": "https://raw.githubusercontent.com/Su-cyber-art/Erosion-CN/main/PreviewIcon.png",
   "website": "https://github.com/Su-cyber-art/Erosion-CN",
   "tintColor": "#CF7D46",
-  "featuredApps": [],
-  "apps": [],
+  "featuredApps": [
+    "io.github.su-cyber-art.ErosionPlus"
+  ],
+  "apps": [
+    {
+      "name": "Erosion Plus",
+      "bundleIdentifier": "io.github.su-cyber-art.ErosionPlus",
+      "developerName": "Su-cyber-art",
+      "subtitle": "iOS / iPadOS 系统配置与 MobileGestalt 研究工具箱（中英双语）",
+      "localizedDescription": "Erosion Plus 是基于 Erosion-CN 的中英双语独立应用，可与原版并存安装。\n\n• MobileGestalt 编辑、备份恢复、文件浏览与诊断\n• 应用启动图与通知铃声定制，含配对和通知路径采集\n• 新增 MG 预设及原值恢复\n\n重签时保留独立 Bundle ID 和 App Group 权限。两款应用修改的系统配置仍是同一份。\n\nErosion Plus is a bilingual standalone fork of Erosion-CN with GestaltX feature ports. Keep its distinct bundle identifier and App Group entitlement when signing.",
+      "iconURL": "https://raw.githubusercontent.com/Su-cyber-art/Erosion-CN/main/PreviewIcon.png",
+      "tintColor": "#CF7D46",
+      "category": "utilities",
+      "screenshots": [],
+      "appPermissions": {
+        "entitlements": [
+          "com.apple.security.application-groups"
+        ],
+        "privacy": {}
+      },
+      "version": "0.10.0",
+      "buildVersion": "24",
+      "versionDate": "2026-11-15T17:21:26Z",
+      "versionDescription": "Erosion Plus 0.10.0 是可与原版 Erosion-CN 并存安装的独立版本，新增应用启动图、通知铃声和额外 MobileGestalt 预设。\n\n- 应用启动图：预览、照片替换、保存当前图片、原件备份与恢复。\n- 通知铃声：扫描、试听、格式转换、替换恢复，以及本机配对和通知路径采集。\n- 9 项 MG 预设／恢复入口：AOD 翻页数量、壁纸视差、HDR 显示、DisplayPort、iPad 应用兼容、Siri AI 模式、端侧 Siri 原值恢复、持续监听 Hey Siri、内部设置面板。\n- 中文／英文界面与权限说明；独立的 App Group、系统金库文件名和侧载更新源。\n\n安装包：`ErosionPlus_v0.10.0_Bilingual.ipa`，Build 24。\nBundle ID：`io.github.su-cyber-art.ErosionPlus`。\nApp Group：`group.io.github.su-cyber-art.ErosionPlus`。\n\n使用支持 App Group 的工具重签安装，并保留独立 Bundle ID。应用可并存，但两款工具仍操作同一台设备上的系统配置。通知路径采集需按页面指引完成本机配对与 LocalDevVPN 连接。\n\n验证：主机端 Swift 回归与原生接口检查、Rust 会话测试，以及 GitHub Actions 的 iOS Release 构建均已通过。已核对安装包的版本、独立 Bundle ID、App Group 和 arm64 架构，并通过 codesign 严格签名检查。尚未进行真机功能验收。\n\n功能来源与许可证见仓库的 `THIRD_PARTY_NOTICES.md`；使用和构建说明见 `GESTALTX_PORT.md`。",
+      "downloadURL": "https://github.com/Su-cyber-art/Erosion-CN/releases/download/v0.10.0/ErosionPlus_v0.10.0_Bilingual.ipa",
+      "size": 9181796,
+      "versions": [
+        {
+          "version": "0.10.0",
+          "buildVersion": "24",
+          "date": "2026-11-15T17:21:26Z",
+          "localizedDescription": "Erosion Plus 0.10.0 是可与原版 Erosion-CN 并存安装的独立版本，新增应用启动图、通知铃声和额外 MobileGestalt 预设。\n\n- 应用启动图：预览、照片替换、保存当前图片、原件备份与恢复。\n- 通知铃声：扫描、试听、格式转换、替换恢复，以及本机配对和通知路径采集。\n- 9 项 MG 预设／恢复入口：AOD 翻页数量、壁纸视差、HDR 显示、DisplayPort、iPad 应用兼容、Siri AI 模式、端侧 Siri 原值恢复、持续监听 Hey Siri、内部设置面板。\n- 中文／英文界面与权限说明；独立的 App Group、系统金库文件名和侧载更新源。\n\n安装包：`ErosionPlus_v0.10.0_Bilingual.ipa`，Build 24。\nBundle ID：`io.github.su-cyber-art.ErosionPlus`。\nApp Group：`group.io.github.su-cyber-art.ErosionPlus`。\n\n使用支持 App Group 的工具重签安装，并保留独立 Bundle ID。应用可并存，但两款工具仍操作同一台设备上的系统配置。通知路径采集需按页面指引完成本机配对与 LocalDevVPN 连接。\n\n验证：主机端 Swift 回归与原生接口检查、Rust 会话测试，以及 GitHub Actions 的 iOS Release 构建均已通过。已核对安装包的版本、独立 Bundle ID、App Group 和 arm64 架构，并通过 codesign 严格签名检查。尚未进行真机功能验收。\n\n功能来源与许可证见仓库的 `THIRD_PARTY_NOTICES.md`；使用和构建说明见 `GESTALTX_PORT.md`。",
+          "downloadURL": "https://github.com/Su-cyber-art/Erosion-CN/releases/download/v0.10.0/ErosionPlus_v0.10.0_Bilingual.ipa",
+          "size": 9181796,
+          "sha256": "de9c101074cc8cc72c4fbec04694f188dacd00066b1ebcbd8df59d7a60a82f54",
+          "minOSVersion": "26.0"
+        }
+      ]
+    }
+  ],
   "news": []
 }
