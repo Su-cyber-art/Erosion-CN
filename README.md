@@ -1,28 +1,15 @@
 <div align="center">
-  <br>
-  <a href="https://github.com/Kianuni/Erosion-CN/releases/latest"><img src="./PreviewIcon.png" alt="App Icon" width="150"></a>
-  <br>
-  <h1>Erosion-CN</h1>
-  <p>基于 <a href="https://github.com/forcequitOS/worse_query">worse_query</a> 的 iOS / iPadOS 系统配置与 MobileGestalt 研究工具箱（中英双语 · 防白苹果安全加固版）</p>
-  <p>支持 iOS / iPadOS 27.0 – 27.2 / 27.3 beta 1（完整支持）以及 iOS / iPadOS 26.x（部分支持）。</p>
-  <p><strong>简体中文</strong> · <a href="./README_EN.md">English Documentation</a> · <a href="https://github.com/Kianuni/AppleFlow">AppleFlow 配套分流与排雷台</a></p>
-  <p>
-    <a href="https://github.com/Kianuni/Erosion-CN/releases/latest"><img alt="GitHub Releases" src="https://img.shields.io/github/v/release/Kianuni/Erosion-CN?style=flat-square&color=CF7D46&label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC"></a>
-    <a href="https://github.com/Kianuni/Erosion-CN/releases"><img alt="IPA Downloads" src="https://img.shields.io/github/downloads/Kianuni/Erosion-CN/total?style=flat-square&color=10B981&label=IPA%20%E4%B8%8B%E8%BD%BD%E9%87%8F"></a>
-    <a href="https://github.com/Kianuni/Erosion-CN/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/Kianuni/Erosion-CN?style=flat-square&color=F59E0B&label=Stars"></a>
-    <a href="https://altdirect.app/?url=https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json"><img alt="Official AltSource" src="https://img.shields.io/badge/%E5%AE%98%E6%96%B9%E6%BA%90-SideStore%20%2F%20AltStore-0EA5E9?style=flat-square"></a>
-    <a href="https://github.com/bebound/AltGallery"><img alt="AltGallery" src="https://img.shields.io/badge/AltGallery-%E5%B7%B2%E6%94%B6%E5%BD%95-7C3AED?style=flat-square"></a>
-    <a href="https://github.com/jailbreakdotparty/Erosion"><img alt="Upstream Repo" src="https://img.shields.io/badge/%E4%B8%8A%E6%B8%B8%E4%BB%93%E5%BA%93-jailbreakdotparty%2FErosion-3868DB?style=flat-square"></a>
-    <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/License-GPLv3-blue?style=flat-square"></a>
-  </p>
-  <p>
-    <a href="https://trendshift.io/repositories/347713" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/347713/daily?language=Swift" alt="Kianuni/Erosion-CN | #2 Swift Repository Of The Day" width="250" height="55"></a>&nbsp;&nbsp;<a href="https://trendshift.io/repositories/347713" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/347713/daily" alt="Kianuni/Erosion-CN | #18 Repository Of The Day" width="250" height="55"></a>
-  </p>
+  <img src="./PreviewIcon.png" alt="Erosion Plus" width="150">
+  <h1>Erosion Plus</h1>
+  <p>可与 Erosion-CN 并存安装的中英双语独立版，包含 GestaltX 功能移植。</p>
+  <p><a href="https://github.com/Su-cyber-art/Erosion-CN">Su-cyber-art/Erosion-CN</a> · <a href="./GESTALTX_PORT.md">移植与构建说明</a></p>
 </div>
 
 ---
 
 ## 项目简介
+
+本分支新增了从 GestaltX 移植的**应用启动图、应用通知铃声（含配对与路径采集）和 9 项 MG 预设／恢复入口**。入口、构建依赖与验证方法见 [移植功能说明](./GESTALTX_PORT.md)，来源见 [第三方声明](./THIRD_PARTY_NOTICES.md)。
 
 **Erosion-CN** 衍生自上游 **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)**，提供中英双语界面，修复了原版多项真机 Bug，并做了防白苹果安全加固：
 
@@ -53,32 +40,15 @@
 
 ## 安装与签名要求
 
-> [!WARNING]
-> 本项目底层依赖至少一个有效的 `App Group` 容器权限。请使用支持保留或注入 App Group 的个人 Apple ID 自签工具（如 **SideStore / AltStore / Feather / Sideloadly / Impactor / iLoader**）或带 App Group 权限的开发者证书签名安装。
+本分支构建的应用为 **Erosion Plus**，安装包名为 `ErosionPlus_v<版本>_Bilingual.ipa`。
 
-### 方式一：订阅官方自动更新源（推荐 · 支持一键升级）
+- Bundle ID：`io.github.su-cyber-art.ErosionPlus`
+- App Group：`group.io.github.su-cyber-art.ErosionPlus`
+- GitHub Actions 构建产物：`Erosion-Plus-IPA`
 
-在 iPhone / iPad 浏览器中点击下方按钮即可一键添加官方软件源（每次新 Release 发布自动同步，内含 `App Group` 权限声明与 `SHA-256` 校验）：
+可运行本分支的 **Build IPA** 工作流，或在完整 Xcode 环境中执行 `./ipabuild.sh`，依赖见 [移植与构建说明](./GESTALTX_PORT.md)。重签时保留上述独立 Bundle ID 与 App Group。它可与原版并存，应用数据和原厂金库文件名分别独立；两款应用修改的系统配置仍是同一份。
 
-<p>
-  <a href="https://altdirect.app/?url=https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json&r=sidestore"><img alt="Add to SideStore" src="https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E6%B7%BB%E5%8A%A0%E8%87%B3-SideStore-7C3AED?style=for-the-badge"></a>
-  <a href="https://altdirect.app/?url=https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json&r=altstore"><img alt="Add to AltStore" src="https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E6%B7%BB%E5%8A%A0%E8%87%B3-AltStore-0284C7?style=for-the-badge"></a>
-  <a href="https://altdirect.app/?url=https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json&r=feather"><img alt="Add to Feather" src="https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E6%B7%BB%E5%8A%A0%E8%87%B3-Feather-EC4899?style=for-the-badge"></a>
-  <a href="https://altdirect.app/?url=https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json"><img alt="More Clients" src="https://img.shields.io/badge/%E6%9B%B4%E5%A4%9A%E7%AD%BE%E5%90%8D%E5%B7%A5%E5%85%B7-LiveContainer%20%2F%20%E5%A4%8D%E5%88%B6-475569?style=for-the-badge"></a>
-</p>
-
-手动添加官方源地址（兼容 SideStore / AltStore / Feather / LiveContainer / ESign）：
-```text
-https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json
-```
-
-### 方式二：手动下载 IPA 签名安装
-
-1. 前往 [Releases 页面](https://github.com/Kianuni/Erosion-CN/releases/latest) 下载最新的 `Erosion_v0.9.1_Bilingual.ipa`。
-2. 使用上述签名工具安装至设备；首次运行可在「主页」日志确认已成功识别 `App Group`。
-3. 详细使用说明与原厂状态恢复教程请查阅：
-   - 📘 [USAGE_GUIDE.md（安装与使用指南）](./USAGE_GUIDE.md)
-   - 🔄 [RESTORE_CHA.md（无损恢复出厂状态指南）](./RESTORE_CHA.md)
+首次独立版本发布前，`apps.json` 保持空应用列表。发布后，更新源工作流只接收内部 Bundle ID 匹配的 `ErosionPlus_*_Bilingual.ipa`，不收录原版 Erosion 安装包。
 
 ---
 
@@ -186,7 +156,7 @@ https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json
 在安装有 Xcode 26 / 27 的 macOS 环境中克隆本仓库并执行构建脚本即可生成未签名 `.ipa`（已自动内嵌标准 entitlements）：
 
 ```bash
-git clone https://github.com/Kianuni/Erosion-CN.git
+git clone https://github.com/Su-cyber-art/Erosion-CN.git
 cd Erosion-CN
 chmod +x ipabuild.sh
 ./ipabuild.sh

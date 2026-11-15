@@ -64,7 +64,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LinkCreditCell(name: "huamidev — GestaltX", description: "本机系统库动态缓存偏移解析、变更对比预览、写后校验与重签 App Group 探测等优秀设计参考", url: "https://github.com/huamidev/GestaltX")
+                    LinkCreditCell(name: "huamidev — GestaltX", description: "应用启动图、通知铃声、设备配对及额外 MG 预设的移植来源；动态解析与写入流程参考", url: "https://github.com/huamidev/GestaltX")
                     LinkCreditCell(name: "kolbicz — WQFiles", description: "LaunchServices CSStore2 (bdsl) 容器快速映射与跨容器只读遥测架构设计参考", url: "https://github.com/kolbicz/WQFiles")
                     LinkCreditCell(name: "KirbySD", description: "MobileGestalt CacheData 布尔槽位偏移研究思路分享", url: "https://www.v2ex.com/t/1246550")
                     LinkCreditCell(name: "PoomSmart — MGKeys", description: "MobileGestalt 混淆键值映射表维护与整理", url: "https://github.com/PoomSmart/MGKeys")

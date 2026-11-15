@@ -3,20 +3,54 @@ name: Build IPA
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: xcode-27
+    timeout-minutes: 60
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Erosion IPA
+      - name: Select Xcode 27.2
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.2'
+
+      - name: Prepare native device console toolchain
+        run: |
+          rustup target add aarch64-apple-ios aarch64-apple-ios-sim
+          command -v cmake >/dev/null || brew install cmake
+          command -v nasm >/dev/null || brew install nasm
+
+      - name: Restore native build cache
+        id: native-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: Native/DeviceConsole/target
+          key: device-console-xcode27.2-${{ runner.arch }}-${{ hashFiles('Native/DeviceConsole/Cargo.lock', 'Native/DeviceConsole/Cargo.toml', 'Native/DeviceConsole/src/**', 'Native/DeviceConsole/vendor/**') }}
+
+      - name: Verify customization and preset behavior
+        run: python3 scripts/test_gestaltx_ports.py
+
+      - name: Build Erosion Plus IPA
+        id: package
         run: |
           chmod +x ipabuild.sh
           ./ipabuild.sh
 
+      - name: Save native build cache
+        if: always() && steps.package.outcome != 'skipped' && steps.native-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Native/DeviceConsole/target
+          key: ${{ steps.native-cache.outputs.cache-primary-key }}
+
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Erosion-CN-IPA
-          path: Erosion_*.ipa
+          name: Erosion-Plus-IPA
+          path: ErosionPlus_*.ipa
+          if-no-files-found: error

@@ -347,6 +347,7 @@ struct AppDataBackupView: View {
     }
 
     private static let protectedSystemBundleIDs: Set<String> = [
+        Bundle.main.bundleIdentifier ?? "io.github.su-cyber-art.ErosionPlus",
         "com.jbdotparty.Erosion",
         "com.apple.springboard",
         "com.apple.PosterBoard",

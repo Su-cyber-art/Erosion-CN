@@ -98,6 +98,9 @@ func mgFormatValue(_ val: Any?) -> String {
 }
 
 func mgKeyDisplayName(_ key: String) -> String {
+    if let preset = MGExtraPreset.allCases.first(where: { $0.key == key }) {
+        return customizationLocalized(preset.title)
+    }
     let names: [String: String] = [
         MGKey.regionCode: L("地区代码 (RegionCode)"),
         MGKey.regionInfo: L("销售地区 (RegionInfo)"),

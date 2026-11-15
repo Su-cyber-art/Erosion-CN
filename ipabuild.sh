@@ -4,17 +4,20 @@ set -e
 
 cd "$(dirname "$0")"
 
-APPLICATION_NAME=Erosion
-APP_VERSION=$(grep -m1 'MARKETING_VERSION =' "$APPLICATION_NAME.xcodeproj/project.pbxproj" | sed -E 's/.*= *([^;]+);/\1/' | tr -d '[:space:]')
+PROJECT_NAME=Erosion
+APPLICATION_NAME=ErosionPlus
+APP_VERSION=$(grep -m1 'MARKETING_VERSION =' "$PROJECT_NAME.xcodeproj/project.pbxproj" | sed -E 's/.*= *([^;]+);/\1/' | tr -d '[:space:]')
 IPA_NAME="${APPLICATION_NAME}_v${APP_VERSION}_Bilingual.ipa"
+if [[ $* == *--debug* ]]; then
+    IPA_NAME="${APPLICATION_NAME}_v${APP_VERSION}_Bilingual.debug.ipa"
+fi
 
 echo "[*] $APPLICATION_NAME v$APP_VERSION Build Script"
 
-rm -rf build
+echo "[*] Building device pairing and notification capture library..."
+./Native/DeviceConsole/build-xcframework.sh
 
-if ls *.ipa 1> /dev/null 2>&1; then
-    rm -rf *.ipa
-fi
+rm -rf build
 
 WORKING_LOCATION="$(pwd)"
 
@@ -26,8 +29,8 @@ cd build
 
 echo "[*] Building..."
 if [[ $* == *--debug* ]]; then
-xcodebuild -project "$WORKING_LOCATION/$APPLICATION_NAME.xcodeproj" \
-    -scheme "$APPLICATION_NAME" \
+xcodebuild -project "$WORKING_LOCATION/$PROJECT_NAME.xcodeproj" \
+    -scheme "$PROJECT_NAME" \
     -configuration Debug \
     -derivedDataPath "$WORKING_LOCATION/build/DerivedDataApp" \
     -destination 'generic/platform=iOS' \
@@ -38,8 +41,8 @@ DD_APP_PATH="$WORKING_LOCATION/build/DerivedDataApp/Build/Products/Debug-iphoneo
 TARGET_APP="$WORKING_LOCATION/build/$APPLICATION_NAME.app"
 cp -r "$DD_APP_PATH" "$TARGET_APP"
 else
-xcodebuild -project "$WORKING_LOCATION/$APPLICATION_NAME.xcodeproj" \
-    -scheme "$APPLICATION_NAME" \
+xcodebuild -project "$WORKING_LOCATION/$PROJECT_NAME.xcodeproj" \
+    -scheme "$PROJECT_NAME" \
     -configuration Release \
     -derivedDataPath "$WORKING_LOCATION/build/DerivedDataApp" \
     -destination 'generic/platform=iOS' \
@@ -69,17 +72,13 @@ fi
 
 echo "[*] Packaging..."
 mkdir Payload
-cp -r $APPLICATION_NAME.app Payload/$APPLICATION_NAME.app
-zip -9vr $APPLICATION_NAME.ipa Payload
+cp -r "$APPLICATION_NAME.app" "Payload/$APPLICATION_NAME.app"
+zip -9vr "$APPLICATION_NAME.ipa" Payload
 
 echo "[*] All done, cleaning up..."
 rm -rf Payload
 
 cd ..
-if [[ $* == *--debug* ]]; then
-mv "$WORKING_LOCATION/build/$APPLICATION_NAME.ipa" "./${APPLICATION_NAME}_v${APP_VERSION}_Bilingual.debug.ipa"
-else
 mv "$WORKING_LOCATION/build/$APPLICATION_NAME.ipa" "./$IPA_NAME"
-fi
 rm -rf "$WORKING_LOCATION/build/"
 echo "[*] Output IPA: $(pwd)/$IPA_NAME"

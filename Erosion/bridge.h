@@ -13,6 +13,8 @@
 #import "Exploits/pathleak.h"
 #import "Exploits/CSStoreResolver.h"
 #import "Tweaks/MobileGestalt/MGImageReader.h"
+#import "Exploits/Customization/GXCustomizationAccess.h"
+#import "Helpers/DeviceConsole/GXDeviceConsole.h"
 #import <Foundation/Foundation.h>
 #import <CoreFoundation/CoreFoundation.h>
 

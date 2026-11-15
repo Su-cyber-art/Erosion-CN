@@ -9,12 +9,15 @@ import SwiftUI
 
 
 struct TweaksView: View {
+    @StateObject private var launchCatalog = LaunchArtworkCatalogModel()
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     NavigationLink("自定义锁屏壁纸", destination: PosterBoardView())
                     NavigationLink("拨号键盘美化", destination: KeypadView())
+                    NavigationLink("应用启动图", destination: LaunchArtworkApplicationsView(catalog: launchCatalog))
+                    NavigationLink("应用通知铃声", destination: AppSoundApplicationsView())
                 } header: {
                     HeaderLabel("外观与桌面定制", symbol: "paintbrush")
                 }

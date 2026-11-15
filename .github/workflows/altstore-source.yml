@@ -1,4 +1,4 @@
-name: Sync Official AltStore Source
+name: Sync Erosion Plus AltStore Source
 
 on:
   release:
@@ -36,7 +36,7 @@ jobs:
           import json
           doc = json.load(open("apps.json", encoding="utf-8"))
           app = doc["apps"][0]
-          assert app["bundleIdentifier"] == "com.jbdotparty.Erosion"
+          assert app["bundleIdentifier"] == "io.github.su-cyber-art.ErosionPlus"
           assert len(app["versions"]) >= 1
           assert app["versions"][0]["sha256"]
           assert "com.apple.security.application-groups" in app["appPermissions"]["entitlements"]

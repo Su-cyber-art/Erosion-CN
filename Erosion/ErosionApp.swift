@@ -23,6 +23,13 @@ struct ErosionApp: App {
     @State private var didBootstrapLogs = false
     
     init() {
+        DeviceConsolePaths.configureIdentity()
+        DeviceConsoleBackgroundTask.shared.registerIfNeeded()
+        Task {
+            let pairing = DevicePairingStore(directory: DeviceConsolePaths.pairing,
+                                             device: DeviceConsolePaths.deviceIdentifier)
+            _ = await pairing.currentPairingPath()
+        }
         UserDefaults.standard.register(defaults: [
             "mgWriteAtomically": true,
             "maxInode": 15000000
@@ -69,6 +76,11 @@ struct ErosionApp: App {
             .id(langMgr.refreshID)
             .environment(\.locale, langMgr.effectiveLocale)
             .environmentObject(mgr)
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Erosion.worse_query.log"))) { notification in
+                if let message = notification.userInfo?["message"] as? String {
+                    print("(customization) \(message)")
+                }
+            }
             .onAppear {
                 guard !didBootstrapLogs else { return }
                 didBootstrapLogs = true
@@ -90,12 +102,13 @@ struct ErosionApp: App {
                     }
                 }
                 print("")
-                print("[*] Erosion v\(AppInfo.appVersion) (\(build))")
+                print("[*] \(AppInfo.appName) v\(AppInfo.appVersion) (\(build))")
                 print(L("[*] 运行环境：\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)，设备标识符：\(machineName()) (\(buildNumber()))"))
                 if !isSupported() && !weOnADebugBuild {
                     Alertinator.shared.alert(title: L("当前 \(device.systemName) 版本暂不支持！"), body: AppMsg.unsupported, showCancel: false, actionLabel: "退出", action: { exitinator() })
                 }
                 group = wq.getAppGroup()
+                GXCustomizationAccess.configureAppGroup(group)
                 print(L("(wq) 当前使用 App Group：\(group)"))
             }
             .overlay {

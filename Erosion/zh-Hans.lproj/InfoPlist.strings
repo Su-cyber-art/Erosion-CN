@@ -1,0 +1,2 @@
+"NSPhotoLibraryAddUsageDescription" = "将当前应用启动图保存到照片图库。";
+"NSLocalNetworkUsageDescription" = "通过本机配对读取通知铃声的应用和文件路径，仅在你主动开始采集时运行。";

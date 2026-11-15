@@ -15,8 +15,8 @@ enum MGURL {
     static let savedGestaltSHA256URL = URL.documentsDirectory.appendingPathComponent("OriginalGestalt.sha256")
     static let preApplyGestaltURL = URL.documentsDirectory.appendingPathComponent("PreApplyGestalt.plist")
     // System-level vault inside mobilegestaltcache Caches: survives sideload app uninstall/reinstall while excluded from iCloud/Finder migration
-    static let systemVaultGestaltURL = URL(fileURLWithPath: "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/.erosion_factory_vault.plist")
-    static let systemVaultSHA256URL = URL(fileURLWithPath: "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/.erosion_factory_vault.sha256")
+    static let systemVaultGestaltURL = URL(fileURLWithPath: "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/.erosion_plus_factory_vault.plist")
+    static let systemVaultSHA256URL = URL(fileURLWithPath: "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/.erosion_plus_factory_vault.sha256")
 }
 
 enum MGRegionUnlockMode: String, CaseIterable, Identifiable {

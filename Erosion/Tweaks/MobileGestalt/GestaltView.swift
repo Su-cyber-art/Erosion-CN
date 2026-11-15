@@ -143,6 +143,7 @@ struct GestaltView: View {
                         TextField("输入自定义机型名称", text: $mgDeviceName)
                     }
                     PlainToggle(L("液态玻璃低功耗渲染（省电模式）"), infoType: .info, infoMessage: MGMsg.liquidGlass, minVrs: 26.0, isOn: store.mgKeyBinding([MGKey.liquidGlassLowPower]))
+                    NavigationLink("更多功能预设", destination: MGExtraPresetsView())
                 } header: {
                     HeaderLabel(L("外观与显示特征"), symbol: "paintbrush.pointed")
                 }

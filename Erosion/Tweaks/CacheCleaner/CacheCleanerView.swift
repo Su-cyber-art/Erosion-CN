@@ -232,7 +232,7 @@ struct CacheCleanerView: View {
         DispatchQueue.global(qos: .utility).async {
             let rawPaths = fsHandlers.getDirPaths(FSURL.appContainers.path)
             var result: [ContainerCacheEntry] = []
-            let selfBID = Bundle.main.bundleIdentifier ?? "com.jbdotparty.Erosion"
+            let selfBID = Bundle.main.bundleIdentifier ?? "io.github.su-cyber-art.ErosionPlus"
 
             for rawPath in rawPaths {
                 let url = URL(fileURLWithPath: rawPath)

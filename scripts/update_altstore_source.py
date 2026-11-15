@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or update official AltStore / SideStore / Feather apps.json from GitHub Releases."""
+"""Generate the independent Erosion Plus sideloading source from its IPA releases."""
 
 from __future__ import annotations
 
@@ -12,26 +12,26 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-REPO = os.environ.get("GITHUB_REPOSITORY", "Kianuni/Erosion-CN")
+REPO = os.environ.get("GITHUB_REPOSITORY", "Su-cyber-art/Erosion-CN")
+BUNDLE_ID = "io.github.su-cyber-art.ErosionPlus"
 MAX_VERSIONS = 8
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_PATH = ROOT / "apps.json"
 
 LOCALIZED_DESC = (
-    "Erosion-CN 是面向 iOS / iPadOS 27.0–27.2.1 & 27.3 beta 1（及 26.x 部分功能）的中英双语系统配置与 MobileGestalt 研究工具箱（防白苹果安全加固版）。\n\n"
-    "• 原位覆盖写入（pwrite + F_FULLFSYNC）与写后全量读回校验，杜绝重启反弹与 0 字节白苹果\n"
-    "• 无损 CoreFoundation 类型直通，根治相机取景黑屏\n"
-    "• 运行时动态解析 libMobileGestalt.dylib 槽位 + 双金库 SHA-256 备份一键恢复原厂\n"
-    "• 支持国行 Apple 智能解锁、海外 eSIM 与 FaceTime 音频开启、应用存档备份、缓存清理与电池/崩溃诊断\n\n"
-    "⚠️ 签名要求：安装时请务必保留 App Group 权限（SideStore / AltStore / Feather 默认支持）。\n\n"
-    "Bilingual (English + Simplified Chinese) bootloop-hardened MobileGestalt & cross-container research toolkit for iOS/iPadOS 27.x. "
-    "Requires at least one App Group entitlement when signing."
+    "Erosion Plus 是基于 Erosion-CN 的中英双语独立应用，可与原版并存安装。\n\n"
+    "• MobileGestalt 编辑、备份恢复、文件浏览与诊断\n"
+    "• 应用启动图与通知铃声定制，含配对和通知路径采集\n"
+    "• 新增 MG 预设及原值恢复\n\n"
+    "重签时保留独立 Bundle ID 和 App Group 权限。两款应用修改的系统配置仍是同一份。\n\n"
+    "Erosion Plus is a bilingual standalone fork of Erosion-CN with GestaltX feature ports. "
+    "Keep its distinct bundle identifier and App Group entitlement when signing."
 )
 
 
 def http_get_bytes(url: str) -> bytes:
     headers = {
-        "User-Agent": "Erosion-CN-AltStore-Sync/1.0",
+        "User-Agent": "ErosionPlus-AltStore-Sync/1.0",
         "Accept": "application/vnd.github+json",
     }
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
@@ -63,12 +63,11 @@ def inspect_ipa_bytes(ipa_bytes: bytes) -> dict:
 def load_existing_versions() -> dict[str, dict]:
     if not OUTPUT_PATH.exists():
         return {}
-    try:
-        existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
-        versions = existing.get("apps", [{}])[0].get("versions", [])
-        return {v["version"]: v for v in versions if isinstance(v, dict) and "version" in v}
-    except Exception:
-        return {}
+    existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+    for app in existing["apps"]:
+        if app["bundleIdentifier"] == BUNDLE_ID:
+            return {v["version"]: v for v in app["versions"]}
+    return {}
 
 
 def main() -> None:
@@ -77,12 +76,13 @@ def main() -> None:
     releases = json.loads(http_get_bytes(api_url).decode("utf-8"))
 
     versions_out: list[dict] = []
-    bundle_id = "com.jbdotparty.Erosion"
+    bundle_id = BUNDLE_ID
 
     for rel in releases:
         if rel.get("draft") or rel.get("prerelease"):
             continue
-        assets = [a for a in rel.get("assets", []) if a.get("name", "").endswith(".ipa")]
+        assets = [a for a in rel.get("assets", [])
+                  if a["name"].startswith("ErosionPlus_") and a["name"].endswith("_Bilingual.ipa")]
         if not assets:
             continue
         asset = assets[0]
@@ -93,26 +93,25 @@ def main() -> None:
 
         prev = existing_by_ver.get(version, {})
         digest_raw = str(asset.get("digest") or "")
-        sha256 = digest_raw.split("sha256:", 1)[1].lower() if digest_raw.startswith("sha256:") else prev.get("sha256")
+        sha256 = digest_raw.split("sha256:", 1)[1].lower() if digest_raw.startswith("sha256:") else None
         build_ver = prev.get("buildVersion")
         min_os = prev.get("minOSVersion", "26.0")
 
-        # Always inspect the newest IPA (or if sha256 is missing) to capture exact CFBundleVersion & MinimumOSVersion
-        if (len(versions_out) == 0 and not build_ver) or not sha256:
-            local_ipa = ROOT / asset["name"]
-            if local_ipa.exists() and local_ipa.stat().st_size == asset.get("size"):
-                ipa_bytes = local_ipa.read_bytes()
-            else:
-                dl_headers = {"User-Agent": "Erosion-CN-AltStore-Sync/1.0"}
-                req = urllib.request.Request(asset["browser_download_url"], headers=dl_headers)
-                with urllib.request.urlopen(req, timeout=60) as resp:
-                    ipa_bytes = resp.read()
+        # Cached metadata is reusable only for the same previously inspected asset.
+        same_asset = (sha256 and sha256 == prev.get("sha256") and build_ver
+                      and prev.get("minOSVersion") and prev.get("size") == asset["size"]
+                      and prev.get("downloadURL") == asset["browser_download_url"])
+        if not same_asset:
+            req = urllib.request.Request(asset["browser_download_url"], headers={"User-Agent": "ErosionPlus-AltStore-Sync/1.0"})
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                ipa_bytes = resp.read()
             if not sha256:
                 sha256 = hashlib.sha256(ipa_bytes).hexdigest()
             ipa_meta = inspect_ipa_bytes(ipa_bytes)
-            build_ver = ipa_meta.get("buildVersion") or build_ver
-            min_os = ipa_meta.get("minOSVersion") or min_os
-            bundle_id = ipa_meta.get("bundleIdentifier") or bundle_id
+            if ipa_meta.get("bundleIdentifier") != BUNDLE_ID:
+                raise RuntimeError(f"Refusing {asset['name']}: IPA bundle identifier is not {BUNDLE_ID}.")
+            build_ver = ipa_meta["buildVersion"]
+            min_os = ipa_meta["minOSVersion"]
 
         entry: dict = {
             "version": version,
@@ -121,7 +120,7 @@ def main() -> None:
             entry["buildVersion"] = build_ver
         entry.update({
             "date": rel.get("published_at") or rel.get("created_at"),
-            "localizedDescription": (rel.get("body") or f"Erosion-CN v{version}").strip(),
+            "localizedDescription": (rel.get("body") or f"Erosion Plus v{version}").strip(),
             "downloadURL": asset["browser_download_url"],
             "size": int(asset["size"]),
             "sha256": sha256,
@@ -132,15 +131,15 @@ def main() -> None:
             break
 
     if not versions_out:
-        raise RuntimeError("No eligible IPA releases found on GitHub.")
+        raise RuntimeError("No ErosionPlus_*_Bilingual.ipa releases found on GitHub.")
 
     latest = versions_out[0]
     icon_url = f"https://raw.githubusercontent.com/{REPO}/main/PreviewIcon.png"
 
     app_obj: dict = {
-        "name": "Erosion-CN",
+        "name": "Erosion Plus",
         "bundleIdentifier": bundle_id,
-        "developerName": "Kianuni",
+        "developerName": REPO.split("/", 1)[0],
         "subtitle": "iOS / iPadOS 系统配置与 MobileGestalt 研究工具箱（中英双语）",
         "localizedDescription": LOCALIZED_DESC,
         "iconURL": icon_url,
@@ -166,10 +165,10 @@ def main() -> None:
     })
 
     source_doc = {
-        "name": "Erosion-CN Official",
-        "identifier": "com.kianuni.erosion-cn.source",
-        "subtitle": "Erosion-CN 官方自动更新源 (SideStore / AltStore / Feather)",
-        "description": "Kianuni/Erosion-CN 官方软件源：基于 worse_query 的 iOS / iPadOS 系统配置与 MobileGestalt 研究工具箱（中英双语 · 防白苹果安全加固版）。每次 GitHub Release 发布自动同步。",
+        "name": "Erosion Plus",
+        "identifier": BUNDLE_ID + ".source",
+        "subtitle": "Erosion Plus 独立版更新源 (SideStore / AltStore / Feather)",
+        "description": LOCALIZED_DESC,
         "iconURL": icon_url,
         "website": f"https://github.com/{REPO}",
         "tintColor": "#CF7D46",

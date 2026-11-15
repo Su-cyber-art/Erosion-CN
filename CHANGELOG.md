@@ -1,5 +1,15 @@
 # Erosion-CN 改进详情与版本历史
 
+## Erosion Plus 0.10.0 — 2026-11-16
+
+- 独立 Bundle ID `io.github.su-cyber-art.ErosionPlus` 和 App Group，可与原版 Erosion-CN 并存安装。
+- 移植应用启动图预览、替换、导出和原件恢复。
+- 移植通知铃声扫描、试听、格式转换、替换恢复，以及本机配对与通知路径采集。
+- 新增 9 项 MG 预设／恢复入口，接入原有暂存、变更预览与写入校验流程。
+- 中文／英文界面与权限说明同步更新；系统备份文件名和侧载更新源独立。
+- 构建号 24；原生设备控制库从源码构建，附带相关许可证与回归测试。
+
+
 > 本文档收录 Erosion-CN 相对上游的完整技术改进说明（原 README「项目简介与核心改进」章节）。各版本发布说明另见 [Releases](https://github.com/Kianuni/Erosion-CN/releases)。
 
 **Erosion-CN** 分支衍生自官方上游项目 **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)**，完成了 **100% 简体中文界面本地化**，修复了原版多项严重真机 Bug，并进行了系统级防白苹果安全加固与底层能力扩展：

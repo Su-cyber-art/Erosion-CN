@@ -40,7 +40,7 @@ struct ContentView: View {
                     Text("「一键恢复原机出厂参数」将校验并原位还原 MobileGestalt 原厂备份（含跨重装系统金库冗余与 SHA-256 核验），同时自动清除锁屏底部文字、资产铭牌、伪监管残留与拨号键盘缓存。")
                 }
             }
-            .navigationTitle("Erosion")
+            .navigationTitle(AppInfo.appName)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
