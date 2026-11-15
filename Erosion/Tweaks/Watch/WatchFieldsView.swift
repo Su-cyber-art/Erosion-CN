@@ -80,9 +80,11 @@ private struct WatchFieldEditor: View {
                         ForEach(WatchValueKind.allCases) { kind in Text(watchLocalized(kind.rawValue)).tag(kind) }
                     }
                 }
-                Section("值") {
+                Section {
                     TextEditor(text: $text).font(.body.monospaced()).frame(minHeight: 170)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
+                } header: {
+                    Text("值")
                 } footer: {
                     if kind == .array || kind == .dictionary { Text("数组和字典使用 XML Plist 片段，可保留嵌套值的类型。") }
                 }

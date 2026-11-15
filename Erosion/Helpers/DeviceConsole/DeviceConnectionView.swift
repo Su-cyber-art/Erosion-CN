@@ -47,7 +47,7 @@ struct DeviceConnectionView: View {
                 HStack(spacing: 12) {
                     ProgressView()
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(customizationLocalized("Broadcasting as Erosion")).font(.headline)
+                        Text(customizationLocalized("Broadcasting as Erosion Plus")).font(.headline)
                         Text(customizationLocalized("Privacy & Security → Developer Mode")).font(.caption).foregroundStyle(.secondary)
                     }
                 }
@@ -125,7 +125,7 @@ struct DeviceConnectionView: View {
             Text(customizationLocalized("Pair this iPhone once"))
                 .font(.headline)
             stepRow(1, customizationLocalized("Privacy & Security → Developer Mode"))
-            stepRow(2, customizationLocalized("Tap Pair with Erosion"))
+            stepRow(2, customizationLocalized("Tap Pair with Erosion Plus"))
             stepRow(3, customizationLocalized("Enter the 6-digit code shown below, in the Dynamic Island, or in the notification"))
         }
         .font(.footnote)

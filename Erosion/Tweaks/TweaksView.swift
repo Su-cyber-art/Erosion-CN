@@ -4,6 +4,9 @@ struct TweaksView: View {
     @State private var search = ""
     @State private var category: ToolCategory?
     @EnvironmentObject private var watchModel: WatchViewModel
+    #if targetEnvironment(simulator)
+    @State private var showsWatchPreview = ProcessInfo.processInfo.arguments.contains("--preview-watch")
+    #endif
 
     private var visibleTools: [AppTool] {
         AppTool.allCases.filter {
@@ -55,6 +58,9 @@ struct TweaksView: View {
             .navigationTitle("工具")
             .searchable(text: $search, prompt: "搜索功能或用途")
             .listSectionSpacing(18)
+            #if targetEnvironment(simulator)
+            .navigationDestination(isPresented: $showsWatchPreview) { WatchWorkspaceView() }
+            #endif
         }
     }
 

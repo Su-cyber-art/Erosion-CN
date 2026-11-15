@@ -39,4 +39,10 @@ capture 3 light zh-Hans settings-light
 capture 0 dark zh-Hans home-dark
 capture 0 light en home-english
 
+xcrun simctl terminate "$DEVICE_ID" io.github.su-cyber-art.ErosionPlus >/dev/null 2>&1 || true
+xcrun simctl ui "$DEVICE_ID" appearance light
+xcrun simctl launch "$DEVICE_ID" io.github.su-cyber-art.ErosionPlus --preview-tab 1 --preview-watch -appLanguageMode zh-Hans -AppleLanguages '(zh-Hans)' -AppleLocale zh-Hans
+sleep 4
+xcrun simctl io "$DEVICE_ID" screenshot "$PREVIEW_ROOT/screenshots/watch-entry.png"
+
 echo "UI screenshots: $PREVIEW_ROOT/screenshots"

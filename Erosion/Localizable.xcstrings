@@ -29223,6 +29223,40 @@
           }
         }
       }
+    },
+    "Broadcasting as Erosion Plus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broadcasting as Erosion Plus"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在广播 Erosion Plus"
+          }
+        }
+      }
+    },
+    "Tap Pair with Erosion Plus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap Pair with Erosion Plus"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按「与 Erosion Plus 配对」"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
