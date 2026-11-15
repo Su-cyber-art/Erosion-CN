@@ -86,4 +86,4 @@ Hermès／Ultra 表盘按手表上报的系统构建、CacheUUID、数据长度�
 
 主页现提供设备概览、MobileGestalt 和常用工具直达；工具页支持搜索与分类；文件页集中显示容器入口；设置页包含语言、运行日志、高级设置、注销与恢复。界面随系统适配深浅色。
 
-构建后使用 `scripts/capture_ui.sh` 生成原生 iOS 模拟器截图，Actions 会上传 `Erosion-Plus-UI`。截图检查不能替代 Watch 真机验收。
+需要本地界面预览时，可手动运行 `scripts/capture_ui.sh`。发版工作流不执行截图验证，界面效果与 Watch 功能由使用者上机验收。
