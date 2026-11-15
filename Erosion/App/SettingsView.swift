@@ -1,89 +1,76 @@
-//
-//  SettingsView.swift
-//  Erosion
-//
-//  Created by lunginspector on 8/20/26.
-//
-
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject private var langMgr = LocalizationManager.shared
-    @AppStorage("autoRespring") var autoRespring = false
-    @AppStorage(CSStoreEngine.fastScanDefaultsKey) var useCSStoreFastScan = true
-    
+    @ObservedObject private var languages = LocalizationManager.shared
+    @EnvironmentObject private var manager: ErosionManager
+    @AppStorage("autoRespring") private var autoRespring = false
+    @State private var asksRespring = false
+
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Picker("界面语言", selection: $langMgr.languageModeRaw) {
+                    HStack(spacing: 14) {
+                        ToolIcon(symbol: "slider.horizontal.3", size: 54)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Erosion Plus").font(.headline)
+                            Text("\(AppInfo.appVersion) · Build \(AppInfo.appBuild)").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }.padding(.vertical, 5)
+                }
+
+                Section("偏好设置") {
+                    Picker("界面语言", selection: $languages.languageModeRaw) {
                         Text("跟随系统").tag("system")
                         Text("简体中文").tag("zh-Hans")
                         Text("English").tag("en")
                     }
                     Toggle("应用修改后自动注销", isOn: $autoRespring)
-                    PlainToggle(
-                        "[测试特性] CSStore2 极速容器映射引擎",
-                        subtitle: "通过 LaunchServices 二进制库毫秒级解析全机应用与共享组，替代慢速 Inode 遍历",
-                        infoType: .info,
-                        infoTitle: "CSStore2 极速容器引擎（测试特性）",
-                        infoMessage: "从 InternalDaemon 只读解析 com.apple.LaunchServices-*.csstore 二进制库（魔数 bdsl），可在数十毫秒内完成全机应用容器、扩展插件与 AppGroup 映射并显示应用名称；若读取失败会自动无缝回退至传统 pathleak 遍历。",
-                        isOn: $useCSStoreFastScan
-                    )
-                    if useCSStoreFastScan {
-                        Button("刷新 CSStore2 容器图谱缓存") {
-                            CSStoreEngine.shared.invalidate()
-                            let summary = CSStoreEngine.shared.summaryText()
-                            Alertinator.shared.alert(title: "CSStore2 图谱状态", body: summary)
-                        }
-                    }
-                } header: {
-                    HeaderLabel("应用设置", symbol: "gearshape")
-                } footer: {
-                    Text("在成功应用功能修改后自动触发设备注销 (Respring)。标记为 [测试特性] 的功能若遇系统兼容异常可随时在此关闭并回退。")
                 }
-                
-                Section {
-                    AppInfoCell(build: build)
-                } header: {
-                    HeaderLabel("关于", symbol: "info.circle")
-                } footer: {
-                    Text("由 [jailbreak.party](https://jailbreak.party) 团队倾情打造 · 简体中文汉化与国行适配修复版")
-                }
-                
-                Section {
-                    LinkCreditCell(image: Image("lunginspector"), name: "lunginspector", description: "主要开发者与项目维护者", url: "https://github.com/lunginspector")
-                    LinkCreditCell(image: Image("forcequit"), name: "forcequit", description: "worse_query 沙盒逃逸漏洞作者", url: "https://github.com/forcequitOS")
-                    LinkCreditCell(image: Image("0xjohnny"), name: "0xjohnny", description: "worse_query 沙盒逃逸漏洞作者", url: "https://github.com/0xjohnnydev")
-                    LinkCreditCell(image: Image("skadz108"), name: "Skadz", description: "漏洞集成、后端核心功能与项目维护", url: "https://github.com/skadz108")
-                    LinkCreditCell(image: Image("rooootdev"), name: "rooootdev", description: "多项后端组件支持", url: "https://github.com/rooootdev")
-                    LinkCreditCell(image: Image("neonmodder123"), name: "neonmodder123", description: "WebView 免越狱注销方案作者", url: "https://github.com/neonmodder123")
-                } header: {
-                    HeaderLabel("上游项目作者 (jailbreak.party)", symbol: "star")
+
+                Section("维护") {
+                    NavigationLink { RuntimeLogScreen() } label: { Label("运行日志", systemImage: "text.alignleft") }
+                    NavigationLink { AdvancedSettingsView() } label: { Label("高级设置", systemImage: "gearshape.2") }
+                    Button { asksRespring = true } label: { Label("注销设备界面", systemImage: "arrow.clockwise") }
+                    NavigationLink { RestoreToolsView() } label: { Label("恢复与重建", systemImage: "arrow.counterclockwise.shield") }
                 }
 
                 Section {
-                    LinkCreditCell(name: "huamidev — GestaltX", description: "应用启动图、通知铃声、设备配对及额外 MG 预设的移植来源；动态解析与写入流程参考", url: "https://github.com/huamidev/GestaltX")
-                    LinkCreditCell(name: "kolbicz — WQFiles", description: "LaunchServices CSStore2 (bdsl) 容器快速映射与跨容器只读遥测架构设计参考", url: "https://github.com/kolbicz/WQFiles")
-                    LinkCreditCell(name: "KirbySD", description: "MobileGestalt CacheData 布尔槽位偏移研究思路分享", url: "https://www.v2ex.com/t/1246550")
-                    LinkCreditCell(name: "PoomSmart — MGKeys", description: "MobileGestalt 混淆键值映射表维护与整理", url: "https://github.com/PoomSmart/MGKeys")
-                } header: {
-                    HeaderLabel("特别致谢与特性参考", symbol: "heart")
+                    NavigationLink { CreditsView() } label: { Label("关于与开源", systemImage: "info.circle") }
+                } footer: {
+                    Text("基于 Erosion-CN，融合 GestaltX 与 GestaltEdit 的开源功能。")
                 }
             }
             .navigationTitle("设置")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        ToolbarLabel("关闭", symbol: "xmark")
-                    }
+            .confirmationDialog("注销设备界面？", isPresented: $asksRespring, titleVisibility: .visible) {
+                Button("立即注销") { manager.shouldRespring = true }
+            } message: { Text("设备界面将重新载入，请先保存其他应用中的内容。") }
+        }
+    }
+}
+
+private struct AdvancedSettingsView: View {
+    @AppStorage(CSStoreEngine.fastScanDefaultsKey) private var fastScan = true
+    var body: some View {
+        List {
+            Section {
+                Toggle("CSStore2 快速容器扫描", isOn: $fastScan)
+                Button("刷新容器列表缓存") {
+                    CSStoreEngine.shared.invalidate()
+                    fsHandlers.invalidateCache()
+                    Alertinator.shared.alert(title: L("缓存已刷新"), body: L("下次打开工具时会重新读取应用容器信息。"))
                 }
+            } footer: {
+                Text("快速扫描通过 LaunchServices 读取容器信息。遇到兼容问题时可关闭，使用路径扫描。")
+            }
+            Section("运行环境") {
+                LabeledContent("系统版本", value: "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)")
+                LabeledContent("硬件标识", value: machineName())
+                LabeledContent("系统构建", value: buildNumber())
+                Text(group).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
             }
         }
-        .id(langMgr.refreshID)
-        .environment(\.locale, langMgr.effectiveLocale)
+        .navigationTitle("高级设置")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

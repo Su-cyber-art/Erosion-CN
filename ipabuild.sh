@@ -54,21 +54,17 @@ TARGET_APP="$WORKING_LOCATION/build/$APPLICATION_NAME.app"
 cp -r "$DD_APP_PATH" "$TARGET_APP"
 fi
 
-echo "[*] Stripping signature..."
-codesign --remove "$TARGET_APP"
-if [ -e "$TARGET_APP/_CodeSignature" ]; then
-    rm -rf "$TARGET_APP/_CodeSignature"
-fi
-if [ -e "$TARGET_APP/embedded.mobileprovision" ]; then
-    rm -rf "$TARGET_APP/embedded.mobileprovision"
+WATCH_APP="$TARGET_APP/Watch/ErosionPlusWatch.app"
+if [ ! -d "$WATCH_APP" ]; then
+    echo "[!] The Watch companion is missing from the built app."
+    exit 1
 fi
 
-echo "[*] Adding entitlements..."
-if command -v ldid >/dev/null 2>&1; then
-    ldid -S"$WORKING_LOCATION/Erosion/Erosion.entitlements" "$TARGET_APP"
-else
-    codesign --force --sign - --entitlements "$WORKING_LOCATION/Erosion/Erosion.entitlements" --generate-entitlement-der --timestamp=none "$TARGET_APP"
-fi
+echo "[*] Signing the Watch companion and iPhone app..."
+codesign --force --sign - --entitlements "$WORKING_LOCATION/ErosionWatch/ErosionWatch.entitlements" --generate-entitlement-der --timestamp=none "$WATCH_APP"
+codesign --force --sign - --entitlements "$WORKING_LOCATION/Erosion/Erosion.entitlements" --generate-entitlement-der --timestamp=none "$TARGET_APP"
+codesign --verify --deep --strict "$TARGET_APP"
+python3 "$WORKING_LOCATION/scripts/verify_app_bundle.py" "$TARGET_APP"
 
 echo "[*] Packaging..."
 mkdir Payload

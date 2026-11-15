@@ -19,10 +19,19 @@ var sema = DispatchSemaphore(value: 0)
 struct ErosionApp: App {
     @StateObject private var mgr = ErosionManager.shared
     @StateObject private var langMgr = LocalizationManager.shared
+    @StateObject private var watchModel = WatchViewModel()
+    @StateObject private var launchCatalog = LaunchArtworkCatalogModel()
     @State private var currentTab = 0
     @State private var didBootstrapLogs = false
     
     init() {
+        #if targetEnvironment(simulator)
+        if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "--preview-tab"),
+           ProcessInfo.processInfo.arguments.indices.contains(index + 1),
+           let tab = Int(ProcessInfo.processInfo.arguments[index + 1]), (0...3).contains(tab) {
+            _currentTab = State(initialValue: tab)
+        }
+        #endif
         DeviceConsolePaths.configureIdentity()
         DeviceConsoleBackgroundTask.shared.registerIfNeeded()
         Task {
@@ -64,18 +73,34 @@ struct ErosionApp: App {
                     .tag(0)
                 TweaksView()
                     .tabItem {
-                        Label("功能修改", systemImage: "wrench.and.screwdriver")
+                        Label("工具", systemImage: "square.grid.2x2")
                     }
                     .tag(1)
                 FMRootView()
                     .tabItem {
-                        Label("文件浏览", systemImage: "folder")
+                        Label("文件", systemImage: "folder")
                     }
                     .tag(2)
+                SettingsView()
+                    .tabItem { Label("设置", systemImage: "gearshape") }
+                    .tag(3)
             }
             .id(langMgr.refreshID)
             .environment(\.locale, langMgr.effectiveLocale)
             .environmentObject(mgr)
+            .environmentObject(watchModel)
+            .environmentObject(launchCatalog)
+            .sheet(item: $watchModel.pendingPreview) { preview in
+                WatchChangesView(preview: preview)
+                    .environmentObject(watchModel)
+                    .environment(\.locale, langMgr.effectiveLocale)
+            }
+            .alert("Apple Watch", isPresented: Binding(
+                get: { watchModel.message != nil && watchModel.pendingPreview == nil },
+                set: { if !$0 { watchModel.message = nil } }
+            )) {
+                Button("好", role: .cancel) { watchModel.message = nil }
+            } message: { Text(watchModel.message ?? "") }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Erosion.worse_query.log"))) { notification in
                 if let message = notification.userInfo?["message"] as? String {
                     print("(customization) \(message)")

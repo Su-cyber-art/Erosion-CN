@@ -24,3 +24,15 @@ Erosion 的适配包括：复用现有 App Group 探测与 worse_query 入口，
 - [idevice / idevice-ffi](https://github.com/jkcoxson/idevice)，Jackson Coxson：固定版本 `7bd551c16c6dd2e058740d85a2d9399a51a776e9`，保留上游 OPACK 解码修正；许可证为 `Erosion/Licenses/idevice-MIT.txt` 及 vendored 目录中的 LICENSE。
 
 详细组件说明见 `Native/DeviceConsole/NOTICE.md`。Rust 库用于配对与日志采集，不包含 AirCard 的文件注入组件。
+
+
+## Apple Watch 支持（0.11.0）
+
+来源：[frs0n/GestaltEdit](https://github.com/frs0n/GestaltEdit)，固定提交 `b8b9ce47b4d6582098f7744b412cea3272bf13b9`（2.2.1）。代码按 GPL-3.0-or-later 使用，完整许可位于 `Erosion/Licenses/GestaltEdit-GPL-3.0.txt`。
+
+- `Shared/Watch`、`Erosion/Tweaks/Watch`：手表通信协议、系统布局表和手表专属预设。Erosion Plus 增加变更预览、严格类型核验、按布局恢复和原值还原。
+- `ErosionWatch/Access`：手表端 App Group 探测和文件访问。实际写入复用 `Shared/InPlaceWrite.swift`，没有采用源项目的先清空文件写法。
+- `ErosionWatch/WatchRespring.*` 与 `respring.html`：手表界面刷新实现。
+- `tests/WatchMG`、`tests/WatchTweaks`、`tests/WatchCacheLeaseTests.m`：相应回归测试，并增加类型变更拦截测试。
+
+表盘布局及部分能力键参考 pookjw/HermesEnabler（Copyright © 2026 Jinwoo Kim，MIT）；界面刷新参考 Gester（Copyright © 2026 KAMUI contributors，MIT）。许可文件 `HermesEnabler-MIT.txt` 和 `Gester-MIT.txt` 同时包含在 iPhone 与 Watch 应用中。

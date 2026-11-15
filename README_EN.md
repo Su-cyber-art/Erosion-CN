@@ -9,6 +9,8 @@
 
 This branch also includes GestaltX ports for **app launch images, notification sounds with on-device pairing and capture, and nine additional MG presets/restoration controls**. See [port notes and build requirements](./GESTALTX_PORT.md) and [source attribution](./THIRD_PARTY_NOTICES.md).
 
+The 0.11.0 branch adds an Apple Watch companion and redesigns Home, Tools, Files and Settings. Keep the embedded Watch app when signing. See [Watch and port notes](./GESTALTX_PORT.md).
+
 ## Overview
 
 **Erosion-CN** started as a Simplified Chinese fork of **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)** and evolved into a heavily hardened, feature-packed toolkit. Starting with **v0.9.0**, a single IPA includes **full English + Simplified Chinese bilingual support**:

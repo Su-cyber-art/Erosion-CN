@@ -1,5 +1,15 @@
 # Erosion-CN 改进详情与版本历史
 
+## Erosion Plus 0.11.0 — 2026-11-16
+
+- 集成 Apple Watch 伴随应用、WatchConnectivity 通信及手表专属预设，支持 Hermès／Ultra 布局、显示、控制、地区等配置。
+- 增加手表字段编辑、变更预览、双端备份与读回核验，并在保存后请求刷新手表界面。
+- iPhone 与 Watch 共用原位写入实现，改进失败回滚的核验与错误报告。
+- 重整主页、工具、文件与设置四个入口；常用功能直达，工具支持搜索与分类，日志独立展示。
+- 更新中文／英文文案、深浅色界面和原生模拟器截图检查。
+- 构建号 25；安装时需保留 IPA 内的 Watch 伴随应用。
+
+
 ## Erosion Plus 0.10.0 — 2026-11-16
 
 - 独立 Bundle ID `io.github.su-cyber-art.ErosionPlus` 和 App Group，可与原版 Erosion-CN 并存安装。

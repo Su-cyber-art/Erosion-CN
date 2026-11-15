@@ -26,31 +26,36 @@ struct FMRootView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    NavigationLink("MobileGestalt 缓存目录", destination: FileBrowserView(path: MGURL.fsGestaltURL.deletingLastPathComponent(), shouldGrant: true))
-                    NavigationLink("系统配置描述文件目录", destination: FileBrowserView(path: FSURL.configProfiles, shouldGrant: true))
-                    NavigationLink("本应用文档目录 (Documents)", destination: FileBrowserView(path: URL.documentsDirectory))
-                } header: {
-                    HeaderLabel("快捷访问", symbol: "bolt")
+                Section("快捷访问") {
+                    NavigationLink { FileBrowserView(path: URL.documentsDirectory) } label: {
+                        ToolRow(title: L("本应用文件"), subtitle: L("文档、导出文件与配置备份"), symbol: "folder", tint: .blue)
+                    }
+                    NavigationLink { FileBrowserView(path: MGURL.fsGestaltURL.deletingLastPathComponent(), shouldGrant: true) } label: {
+                        ToolRow(title: L("MobileGestalt 缓存"), subtitle: L("查看系统能力缓存目录"), symbol: "slider.horizontal.3")
+                    }
+                    NavigationLink { FileBrowserView(path: FSURL.configProfiles, shouldGrant: true) } label: {
+                        ToolRow(title: L("系统配置文件"), subtitle: L("配置描述与锁屏信息"), symbol: "doc.badge.gearshape", tint: .indigo)
+                    }
                 }
-                
-                Section {
-                    NavigationLink("应用数据容器 (Data)", destination: FileBrowserView(path: FSURL.appContainers, isContainer: true))
-                    NavigationLink("插件数据容器 (Plugin)", destination: FileBrowserView(path: FSURL.appPlugins, isContainer: true))
-                    NavigationLink("共享应用组 (App Groups)", destination: FileBrowserView(path: FSURL.appGroup, isContainer: true))
-                } header: {
-                    HeaderLabel("应用程序", symbol: "square.grid.2x2")
+                Section("应用程序") {
+                    container("应用数据", subtitle: "各应用的文档与偏好设置", symbol: "square.stack.3d.up", path: FSURL.appContainers)
+                    container("插件数据", subtitle: "应用扩展的独立容器", symbol: "puzzlepiece.extension", path: FSURL.appPlugins)
+                    container("共享应用组", subtitle: "应用与扩展共用的文件", symbol: "folder.badge.person.crop", path: FSURL.appGroup)
                 }
-                
-                Section {
-                    NavigationLink("守护进程容器 (Daemon)", destination: FileBrowserView(path: FSURL.internalDaemons, isContainer: true))
-                    NavigationLink("系统数据容器 (System)", destination: FileBrowserView(path: FSURL.systemData, isContainer: true))
-                    NavigationLink("系统共享组容器 (SystemGroup)", destination: FileBrowserView(path: FSURL.sysGroup, isContainer: true))
-                } header: {
-                    HeaderLabel("系统容器", symbol: "gear")
+                Section("系统容器") {
+                    container("守护进程", subtitle: "后台服务的数据目录", symbol: "gearshape.2", path: FSURL.internalDaemons)
+                    container("系统数据", subtitle: "系统组件的数据容器", symbol: "internaldrive", path: FSURL.systemData)
+                    container("系统共享组", subtitle: "系统服务共用的容器", symbol: "folder.badge.gearshape", path: FSURL.sysGroup)
                 }
             }
-            .navigationTitle("文件浏览")
+            .navigationTitle("文件")
+            .listSectionSpacing(18)
+        }
+    }
+
+    private func container(_ title: String, subtitle: String, symbol: String, path: URL) -> some View {
+        NavigationLink { FileBrowserView(path: path, isContainer: true) } label: {
+            ToolRow(title: title.loc, subtitle: subtitle.loc, symbol: symbol, tint: .blue)
         }
     }
 }
