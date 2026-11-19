@@ -129,12 +129,14 @@ struct ErosionApp: App {
                 print("")
                 print("[*] \(AppInfo.appName) v\(AppInfo.appVersion) (\(build))")
                 print(L("[*] 运行环境：\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)，设备标识符：\(machineName()) (\(buildNumber()))"))
-                if !isSupported() && !weOnADebugBuild {
-                    Alertinator.shared.alert(title: L("当前 \(device.systemName) 版本暂不支持！"), body: AppMsg.unsupported, showCancel: false, actionLabel: "退出", action: { exitinator() })
-                }
                 group = wq.getAppGroup()
                 GXCustomizationAccess.configureAppGroup(group)
                 print(L("(wq) 当前使用 App Group：\(group)"))
+                if isRunningInLiveContainer() {
+                    print(LocalizationManager.isEnglish
+                        ? "[!] (lc) Currently running inside LiveContainer: if container authorization fails, check host App Group settings in LiveContainer or install standalone."
+                        : "[!] (lc) 当前运行在 LiveContainer 内，若遇容器授权失败，请在 LiveContainer 应用设置中检查宿主 App Group 配置，或使用独立侧载安装。")
+                }
             }
             .overlay {
                 if mgr.shouldRespring {

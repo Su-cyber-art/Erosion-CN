@@ -7,7 +7,10 @@
 
 ---
 
-当前 0.11.0 分支新增 Apple Watch 伴随应用，并重整主页、工具、文件与设置。签名时需保留安装包内的 Watch 应用，详细流程见 [Watch 与移植说明](./GESTALTX_PORT.md)。
+当前版本 `0.12.0` 已合入 Erosion-CN `v1.0.6`，新增 APFS 数据暂存与恢复、Wi-Fi 文件互传、文件分析和开屏广告管理。Plus 同时提供 Apple Watch 伴随应用、GestaltX 功能和新版界面。签名时需保留安装包内的 Watch 应用，详细流程见 [Watch 与移植说明](./GESTALTX_PORT.md)。
+
+> [!WARNING]
+> **系统版本重要提醒（2026-11-17）**：苹果已于 **`iOS / iPadOS 27.3 beta 2`（Build `24C5049d`）** 正式封堵 `worse_query` 沙盒漏洞——升级后将无法读写 `MobileGestalt` 且已生效的修改会被系统重置。**当前最高仅支持至 `27.3 beta 1`**，强烈建议停留在 **`iOS 27.2.1`**（功能最完整）并关闭系统自动更新。
 
 ## 项目简介
 
@@ -22,7 +25,15 @@
 - **原厂双备份 + 一键恢复**：沙盒与系统金库双重 `SHA-256` 备份，卸载重装不丢，可一键还原原机出厂参数。
 - **国行 Apple 智能解锁**：完整美版 `LL + LL/A` / 仅改 `LL` 双模式，四要素体检与一键配齐修复，真机生效核验探针，`SiriHub`、`Audio Intelligence` 等坑位自动防呆。
 - **国行底层限制解除**：FaceTime 音频、境外 eSIM、「无线局域网」显示为「Wi-Fi」。
-- **实用工具**：应用存档备份、缓存清理、跨容器文件浏览、语音备忘录无损导出、电池与崩溃诊断，以及 Surge / Stash 分流规则一键导出。
+- **实用工具**：APFS `clonefile()` 零空间应用暂存舱（五重防呆）、Wi-Fi 局域网 HTTP 文件传输、文件夹深度搜索与最大 100 文件分析、POSIX `chmod` 权限修改、POSIX 极速缓存清理、跨容器文件浏览、语音备忘录无损导出、电池与崩溃诊断，以及配合 [AppleFlow](https://github.com/Kianuni/AppleFlow) 的分流规则一键导出。
+
+### `v1.0.0 – v1.0.3` 核心新特性
+
+- **APFS `clonefile()` 零空间应用换签 / 重装暂存舱（含内置使用说明）**：五重防呆护栏（`embedded.mobileprovision` 24 小时到期预警、10 秒活跃 SQLite WAL 写入锁拦截、只克隆不移动 `clonefile()` + 微信 MD5 账号识别、`manifest.json` 项数校验、`.erosion_pre_restore_bak` 原子回滚 + 跨 Bundle ID 偏好适配 + 暂存舱保留 + 主页常驻防误删横幅）与交互式分步教程 (`APFSVaultGuideSheet`)。
+- **Wi-Fi 局域网 HTTP 文件传输**：基于 `NWListener` + 随机 6 位 PIN Basic Auth（兼容留空或大小写用户名）+ 暗黑 WebUI，支持 64 KB 流式下载/上传、文件夹 `.zip` 打包（2 GB 上限）、重名自动顺延及 Safari / macOS 本地网络排障引导。
+- **开屏广告缓存精准锁死 & 文件管理器深度增强**：专属 `AdCacheBlockerView` 覆盖应用与 `AppGroup` 共享组（含单文件配置预览与 `.erosion_adlock` 防重建 `0555` 占位锁、文件浏览器长按收藏自定义路径及生效边界提醒），配合子目录递归搜索（500 条）、Top 100 最大文件分析、最近访问 15 条目录、剪贴板路径直达与 POSIX `chmod` 权限编辑器。
+- **容器缓存清理提速与选择菜单**：`.userInitiated` + POSIX `fstatat` 极速扫描、拒绝容器去重缓存、实时进度/停止按钮与「全选 / 反选 / 清空已选」菜单。
+- **`iOS 27.3 beta 2+` 漏洞封堵哨兵与 `27.3 beta 1` 提醒**：精确区分 `27.3 beta 1` (`24C503*`) 与 `27.3 beta 2+` (`24C504*`+ / `26.7.3+`)，主页顶部与沙盒报错提供明确引导而不强退应用。
 
 > 📜 完整的技术改进说明与版本历史见 [CHANGELOG.md](./CHANGELOG.md)，各版本发布说明见 [Releases](https://github.com/Kianuni/Erosion-CN/releases)。  
 > 📖 外部独立底层架构解析：[《从 worse_query 逃逸到 MobileGestalt 运行时重构：深入 Erosion-CN 的防白苹果原位写入、双重金库与国行底层解锁架构》](https://lijianfei.com/post/erosion-cn-ios-system-configuration-mobilegestalt-architecture/)
@@ -50,7 +61,7 @@
 
 可运行本分支的 **Build IPA** 工作流，或在完整 Xcode 环境中执行 `./ipabuild.sh`，依赖见 [移植与构建说明](./GESTALTX_PORT.md)。重签时保留上述独立 Bundle ID 与 App Group。它可与原版并存，应用数据和原厂金库文件名分别独立；两款应用修改的系统配置仍是同一份。
 
-首次独立版本发布前，`apps.json` 保持空应用列表。发布后，更新源工作流只接收内部 Bundle ID 匹配的 `ErosionPlus_*_Bilingual.ipa`，不收录原版 Erosion 安装包。
+在 [Plus Releases](https://github.com/Su-cyber-art/Erosion-CN/releases/latest) 下载 `ErosionPlus_v0.12.0_Bilingual.ipa`。SideStore、AltStore 或 Feather 可订阅 [Plus 更新源](https://raw.githubusercontent.com/Su-cyber-art/Erosion-CN/main/apps.json)，发布后自动更新。
 
 ---
 
@@ -166,13 +177,18 @@ chmod +x ipabuild.sh
 
 ---
 
-## 更多开源项目推荐 (Kianuni Ecosystem)
+## 协同生态 (Ecosystem)
 
-如果你喜欢 **Erosion-CN**，欢迎关注同系列其他 iOS 开源工具（全部坚持开源透明、无暗桩）：
+**Erosion-CN**（底层准入）、**[AppleFlow](https://github.com/Kianuni/AppleFlow)**（零 MitM 分流）与 **[AppleLens](https://github.com/Kianuni/AppleLens)**（macOS 观测与 USB 排障）共同组成面向 Apple Intelligence 的完整开源工具链；此外，也欢迎搭配 Kianuni 旗下的其他安全、隐私与个性化开源工具（全部开源透明、无暗桩）：
+
+```text
+  [1. Erosion-CN] 底层准入 ──▶ [2. AppleFlow] 零 MitM 分流 ──▶ [3. AppleLens] macOS 观测 · 探针 · 报告解读
+```
 
 | 项目 | 定位与核心特性 | 适用系统 / 场景 |
 | :--- | :--- | :--- |
 | **[AppleFlow](https://github.com/Kianuni/AppleFlow)** | 零 MitM 的 Apple 智能、PCC 隐私云计算与中文 Siri 极简分流方案，附带 **[在线配置体检与出口探针台](https://kianuni.github.io/AppleFlow/)** | Surge / Loon / Shadowrocket / Stash / Mihomo / QX / Sing-box |
+| **[AppleLens](https://github.com/Kianuni/AppleLens)** | 零 MitM、纯只读的 macOS 原生 Apple 智能三态雷达、USB 真机日志翻译排障、四路分流探针与透明报告解读工作台 | macOS 14.0+ 桌面端 / CLI / USB 连线 iPhone 排障 |
 | **[WQGuard](https://github.com/Kianuni/WQGuard)** | 100% 只读开源的沙盒越权检测、侧载 IPA 安全审查与固件 CVE 防护工具 | iOS / iPadOS 26.2+ – 27.x 侧载排雷与设备自检 |
 | **[Camlo](https://github.com/Kianuni/Camlo)** | **Camlo · 开幕** — 免电脑一键换上滑动解锁变身、裸眼 3D 与动态锁屏壁纸，让 iPhone 锁屏活起来 | iOS / iPadOS 26 – 27 个性化锁屏美化 |
 | **[Enkard](https://github.com/Kianuni/Enkard)** | 纯离线、零云同步、绑定 Apple Secure Enclave 硬件安全芯片的 iPhone 银行级加密卡包 | 个人隐私卡券 / 敏感凭据本地加密收纳 |
@@ -191,6 +207,7 @@ chmod +x ipabuild.sh
 - **[KirbySD](https://www.v2ex.com/t/1246550)** — 分享 `MobileGestalt` 二进制 `CacheData` 中 `green-tea` / `not-green-tea` 布尔槽位研究思路
 - **[PoomSmart / MGKeys](https://github.com/PoomSmart/MGKeys)** — 长期维护与整理 `MobileGestalt` 混淆键值映射表
 - **[kolbicz / WQFiles](https://github.com/kolbicz/WQFiles)** — 分享 LaunchServices `.csstore` (`"bdsl"`) 容器图谱解析研究思路（GPLv3）
+- **[yangokok886 / WCMigrate](https://github.com/yangokok886/WCMigrate)** — 分享基于 APFS `clonefile()` 写时复制的应用数据迁移与暂存研究思路（GPLv3）
 
 ---
 

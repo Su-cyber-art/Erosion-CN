@@ -20,6 +20,7 @@ struct FolderRow: View {
     @State private var folderType: FolderType = .normal
     
     @State private var showInfo = false
+    @State private var showWiFiShare = false
     
     var body: some View {
         NavigationLink(destination: FileBrowserView(path: file.destURL, shouldGrant: shouldGrant)) {
@@ -51,6 +52,9 @@ struct FolderRow: View {
         }
         .sheet(isPresented: $showInfo) {
             InfoViewer(file)
+        }
+        .sheet(isPresented: $showWiFiShare) {
+            WiFiShareSheet(rootURL: file.destURL)
         }
         .quickLookPreview($previewURL)
         .contextMenu {
@@ -88,6 +92,69 @@ struct FolderRow: View {
                     }
                 } label: {
                     Label("分享", systemImage: "square.and.arrow.up")
+                }
+
+                Button {
+                    showWiFiShare = true
+                } label: {
+                    Label(
+                        LocalizationManager.isEnglish ? "Wi-Fi File Sharing" : "Wi-Fi 无线传输",
+                        systemImage: "wifi"
+                    )
+                }
+
+                if AdCustomWatchStore.shared.canAddAsCustomTarget(url: file.fileURL, owner: file.owner) {
+                    let isWatched = AdCustomWatchStore.shared.contains(url: file.fileURL)
+                    Button {
+                        if isWatched {
+                            AdCustomWatchStore.shared.remove(fullPath: file.fileURL.path)
+                            Haptic.shared.play(.soft)
+                        } else {
+                            let canon = AdCustomWatchStore.canonicalVarPath(file.fileURL.standardizedFileURL.path)
+                            AdCustomWatchStore.shared.addValidatedRule(canonicalPath: canon)
+                            Haptic.shared.notify(.success)
+                            Alertinator.shared.alert(
+                                title: LocalizationManager.isEnglish ? "Added to Ad Blocker" : "已加入广告锁死列表",
+                                body: LocalizationManager.isEnglish
+                                    ? "Manage or lock \"\(file.name)\" anytime in Splash Ad Blocker."
+                                    : "已收藏目录「\(file.name)」，可在「开屏广告缓存精准锁死」页直接管理或一键锁死。"
+                            )
+                        }
+                    } label: {
+                        Label(
+                            isWatched
+                                ? (LocalizationManager.isEnglish ? "Remove from Ad Blocker" : "移出广告锁死列表")
+                                : (LocalizationManager.isEnglish ? "Add to Ad Blocker" : "加入广告锁死列表"),
+                            systemImage: isWatched ? "lock.slash" : "lock.shield"
+                        )
+                    }
+                }
+
+                if AdWhitelistStore.shared.canWhitelistPath(url: file.fileURL, owner: file.owner) {
+                    let isWhitelisted = AdWhitelistStore.shared.containsExactPath(file.fileURL)
+                    Button {
+                        if isWhitelisted {
+                            AdWhitelistStore.shared.removeExactPath(file.fileURL.path)
+                            Haptic.shared.play(.soft)
+                        } else {
+                            let canon = AdCustomWatchStore.canonicalVarPath(file.fileURL.standardizedFileURL.path)
+                            AdWhitelistStore.shared.addPathRule(rawPath: canon)
+                            Haptic.shared.notify(.success)
+                            Alertinator.shared.alert(
+                                title: LocalizationManager.isEnglish ? "Added to Ad Whitelist" : "已加入广告白名单",
+                                body: LocalizationManager.isEnglish
+                                    ? "\"\(file.name)\" will be skipped by global Lock All in Splash Ad Blocker."
+                                    : "目录「\(file.name)」已加入广告锁定白名单，执行一键全锁时会自动跳过。"
+                            )
+                        }
+                    } label: {
+                        Label(
+                            isWhitelisted
+                                ? (LocalizationManager.isEnglish ? "Remove from Ad Whitelist" : "移出广告白名单")
+                                : (LocalizationManager.isEnglish ? "Add to Ad Whitelist" : "加入广告白名单"),
+                            systemImage: isWhitelisted ? "shield.slash" : "checkmark.shield"
+                        )
+                    }
                 }
                 
                 Divider()

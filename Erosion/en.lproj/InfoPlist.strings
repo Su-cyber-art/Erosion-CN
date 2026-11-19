@@ -1,2 +1,2 @@
 "NSPhotoLibraryAddUsageDescription" = "Save the current app launch image to your photo library.";
-"NSLocalNetworkUsageDescription" = "Pair with this device to identify notification sound files. Capture runs only when you start it.";
+"NSLocalNetworkUsageDescription" = "Share files over Wi-Fi and pair with this device to identify apps and notification sound file paths.";

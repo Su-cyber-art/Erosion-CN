@@ -25,7 +25,7 @@ enum ToolCategory: String, CaseIterable, Identifiable {
 
 enum AppTool: String, CaseIterable, Identifiable {
     case gestalt, systemConfig, fileReplacement, wallpapers, keypads, launchImages, sounds
-    case backups, cacheCleaner, power, crashes, appGroups, recordings, pairing, watch, logs
+    case backups, cacheCleaner, adBlocker, power, crashes, appGroups, recordings, pairing, watch, logs
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -38,6 +38,7 @@ enum AppTool: String, CaseIterable, Identifiable {
         case .sounds: L("通知铃声")
         case .backups: L("存档管理")
         case .cacheCleaner: L("缓存清理")
+        case .adBlocker: L("开屏广告管理")
         case .power: L("电池与温控")
         case .crashes: L("崩溃分析")
         case .appGroups: L("分流与书签")
@@ -58,6 +59,7 @@ enum AppTool: String, CaseIterable, Identifiable {
         case .sounds: L("试听、替换和还原通知声音")
         case .backups: L("备份、还原应用与游戏数据")
         case .cacheCleaner: L("查看并释放容器缓存空间")
+        case .adBlocker: L("锁定广告缓存、管理应用与路径白名单")
         case .power: L("电池状态与温度记录")
         case .crashes: L("查看崩溃和内存终止记录")
         case .appGroups: L("导出分流规则与 Safari 书签")
@@ -78,6 +80,7 @@ enum AppTool: String, CaseIterable, Identifiable {
         case .sounds: "bell.badge"
         case .backups: "externaldrive"
         case .cacheCleaner: "sparkles"
+        case .adBlocker: "lock.shield"
         case .power: "battery.75percent"
         case .crashes: "waveform.path.ecg"
         case .appGroups: "network"
@@ -91,7 +94,7 @@ enum AppTool: String, CaseIterable, Identifiable {
         switch self {
         case .gestalt, .systemConfig, .fileReplacement: .system
         case .wallpapers, .keypads, .launchImages, .sounds: .appearance
-        case .backups, .cacheCleaner: .data
+        case .backups, .cacheCleaner, .adBlocker: .data
         case .power, .crashes, .appGroups, .recordings, .logs: .diagnostics
         case .pairing, .watch: .connections
         }
@@ -113,6 +116,7 @@ struct AppToolDestination: View {
         case .sounds: AppSoundApplicationsView()
         case .backups: AppDataBackupView()
         case .cacheCleaner: CacheCleanerView()
+        case .adBlocker: AdCacheBlockerView()
         case .power: PowerTelemetryView()
         case .crashes: CrashDiagnosticsView()
         case .appGroups: AppGroupHubView()

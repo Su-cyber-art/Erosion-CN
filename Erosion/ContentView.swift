@@ -3,12 +3,15 @@ import SwiftUI
 struct ContentView: View {
     @AppStorage("ogMachineName") private var originalMachine = ""
     @EnvironmentObject private var watchModel: WatchViewModel
+    @ObservedObject private var stagingVault = APFSStagingVault.shared
     private let shortcuts: [AppTool] = [.launchImages, .sounds, .backups, .cacheCleaner]
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
+                    statusMessages
+
                     VStack(alignment: .leading, spacing: 14) {
                         HStack(spacing: 14) {
                             ToolIcon(symbol: isPad() ? "ipad" : "iphone", size: 52)
@@ -84,6 +87,52 @@ struct ContentView: View {
             .background(AppDesign.page)
             .navigationTitle("Erosion Plus")
             .onAppear { if originalMachine.isEmpty { originalMachine = machineName() } }
+        }
+    }
+
+    @ViewBuilder
+    private var statusMessages: some View {
+        if isWorseQueryPatchedOS() {
+            CompactAlert(
+                title: LocalizationManager.isEnglish
+                    ? "worse_query Patched on This iOS Build"
+                    : "当前系统版本已封堵 worse_query 漏洞",
+                symbol: "exclamationmark.octagon.fill",
+                text: LocalizationManager.isEnglish
+                    ? "Apple patched worse_query in iOS 27.3 beta 2+ and 26.7.3+. MobileGestalt and cross-container changes are unavailable on this build. The highest supported version is iOS 27.3 beta 1."
+                    : "Apple 已于 iOS 27.3 beta 2+ 及 26.7.3+ 封堵 worse_query 漏洞，当前系统无法写入 MobileGestalt 或跨容器修改文件。最高支持至 iOS 27.3 beta 1。",
+                color: .red
+            )
+        }
+
+        if isRunningInLiveContainer() {
+            CompactAlert(
+                title: LocalizationManager.isEnglish ? "Running Inside LiveContainer" : "当前运行在 LiveContainer 内",
+                symbol: "shippingbox.circle.fill",
+                text: LocalizationManager.isEnglish
+                    ? "If container authorization fails, check the host App Group configuration in LiveContainer's app settings, or install Erosion Plus as a standalone app."
+                    : "若遇容器授权失败，请在 LiveContainer 应用设置中检查宿主 App Group 配置，或独立侧载安装 Erosion Plus。",
+                color: .orange
+            )
+        }
+
+        if stagingVault.activeStagedItemsCount > 0 {
+            VStack(alignment: .leading, spacing: 12) {
+                CompactAlert(
+                    title: LocalizationManager.isEnglish
+                        ? "Keep Erosion Plus Installed (\(stagingVault.activeStagedItemsCount) Staged)"
+                        : "请保留 Erosion Plus（\(stagingVault.activeStagedItemsCount) 份待还原数据）",
+                    symbol: "externaldrive.badge.exclamationmark",
+                    text: LocalizationManager.isEnglish
+                        ? "The APFS vault contains app data awaiting restore. Restore and verify the data in Save Manager, then release the vault before uninstalling Erosion Plus."
+                        : "APFS 暂存舱中有应用数据等待还原。请在存档管理中完成还原并确认数据完整，释放暂存舱后再卸载 Erosion Plus。",
+                    color: .orange
+                )
+                NavigationLink { AppDataBackupView() } label: {
+                    Label(AppTool.backups.title, systemImage: AppTool.backups.symbol)
+                }
+                .buttonStyle(.bordered)
+            }
         }
     }
 

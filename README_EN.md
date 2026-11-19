@@ -9,13 +9,18 @@
 
 This branch also includes GestaltX ports for **app launch images, notification sounds with on-device pairing and capture, and nine additional MG presets/restoration controls**. See [port notes and build requirements](./GESTALTX_PORT.md) and [source attribution](./THIRD_PARTY_NOTICES.md).
 
-The 0.11.0 branch adds an Apple Watch companion and redesigns Home, Tools, Files and Settings. Keep the embedded Watch app when signing. See [Watch and port notes](./GESTALTX_PORT.md).
+Version `0.12.0` integrates Erosion-CN `v1.0.6`, adding APFS data staging and restore, Wi-Fi file sharing, file analysis and splash ad management. Plus includes an Apple Watch companion and redesigned Home, Tools, Files and Settings. Keep the embedded Watch app when signing. See [Watch and port notes](./GESTALTX_PORT.md).
+
+> [!WARNING]
+> **Important Version Notice (2026-11-17)**: Apple has **patched `worse_query` in `iOS / iPadOS 27.3 beta 2` (`24C5049d`)** — updating breaks `MobileGestalt` access and resets existing tweaks. **Maximum supported version is `27.3 beta 1`**. Stay on **`iOS 27.2.1`** (best feature compatibility) and disable automatic updates.
 
 ## Overview
 
-**Erosion-CN** started as a Simplified Chinese fork of **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)** and evolved into a heavily hardened, feature-packed toolkit. Starting with **v0.9.0**, a single IPA includes **full English + Simplified Chinese bilingual support**:
+> **Not just a translation** — **Erosion-CN** is a bootloop-safe, zero-hardcoded-offset, bilingual (**English / 简体中文**) hardened edition of **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)** built for **all regions & devices**.
+
+While it began as a Simplified Chinese fork, it has evolved into an engineering-first overhaul with persistent in-place writes, runtime `libMobileGestalt.dylib` slot resolution, and dual-vault factory backups. Starting with **v0.9.0**, a single IPA ships with **full English + Simplified Chinese support**:
 - Automatically matches your device's system language out of the box (English for all non-Chinese system locales, Simplified Chinese for `zh*`).
-- Includes an instant **Language Switcher** in **Settings → App Language** (`Follow System` / `简体中文` / `English`).
+- Includes an instant **Language Switcher** in **Settings → App Language** (`Follow System` / `English` / `简体中文`).
 
 > 📜 Full version history: [CHANGELOG.md](./CHANGELOG.md) · [Releases](https://github.com/Kianuni/Erosion-CN/releases)  
 > 📖 Independent Architecture Deep-Dive (zh-Hans, with SVG diagrams): [*From `worse_query` Escape to `MobileGestalt` Runtime Reconstruction: Inside Erosion-CN's Bootloop-Safe In-Place Write & Dual-Vault Architecture*](https://lijianfei.com/post/erosion-cn-ios-system-configuration-mobilegestalt-architecture/)
@@ -50,6 +55,15 @@ The 0.11.0 branch adds an Apple Watch companion and redesigns Home, Tools, Files
    - **App Group Hub & Safari Bookmarks Exporter (`AppGroupHubView`)**: Export Safari bookmarks (HTML / JSON) and generate Surge `.sgmodule` / Stash `.stoverride` routing rules.
    - **Voice Memos & Call Recording Extractor (`VoiceMemosAIView`)**: Batch-export lossless `.m4a` recordings titled via `CloudRecordings.db` and inspect on-device AI/speech model caches.
 
+6. **`v1.0.0 – v1.0.3` — APFS Swap Vault, Wi-Fi File Sharing, Splash Ad Blocker Pro, File Manager Pro & OS Sentinel**
+   - **APFS `clonefile()` Zero-Space App Swap Vault & Interactive Guide (`APFSStagingVault` / `APFSVaultGuideSheet`)**: Kernel CoW `clonefile()` snapshot staging for `Documents`, `Library/Application Support`, and `Library/Preferences` with **5-layer foolproofing** — (1) `embedded.mobileprovision` `< 24h` / expired cert gate, (2) 10s active SQLite WAL lock check, (3) copy-never-move `clonefile()` with WeChat 32-hex MD5 account detection, (4) `manifest.json` item-count integrity verification, and (5) atomic `.erosion_pre_restore_bak` swap & rollback + cross-BundleID `.plist` adaptation + vault retention + persistent Home banner warning against uninstalling Erosion + built-in step-by-step guide.
+   - **Wi-Fi HTTP File Sharing (`WiFiShareServer` / `WiFiShareSheet`)**: `NWListener` HTTP server with random 6-digit PIN Basic Auth (accepts blank or case-insensitive `'erosion'` username), dark-mode Web UI, 64 KB chunked downloads, folder `.zip` downloads (2 GB cap), 64 KB chunked `.part` uploads with non-destructive auto-renaming, Safari/macOS Local Network tips, and automatic stop on dismiss/background.
+   - **Splash Ad Cache Blocker Pro (`AdCacheBlockerView` / `AdCustomWatchStore`)**: Scans both app containers and `Shared/AppGroup` containers for ad SDK caches (`KSAdSDK`, `BUAdSDK`, `GDTMobSDK`, `TADCache`, `SplashAd`, etc.) and standalone ad config files (`splash_ad.json`/`.plist`), adds anti-recreate `0444` `.erosion_adlock` sentinel locks inside `0555` folders, inline file preview, custom watch-list rules (via `+` or File Browser long-press), and clear boundary guidance recommending proxy ad-block pairing.
+   - **Folder Search, Top 100 Largest Files, Recent & Go to Path (`FolderAnalysisSheet` / `FMNavigationStore`)**: Cancellable recursive subfolder search (500-match cap), fast `fstatat` Top 100 largest files ranking, 15 recent non-root folders, and clipboard-aware `/var/` Go to Path.
+   - **POSIX Permission Editor (`InfoViewer`)**: Safe `chmod` toggles (`0555`/`0444` read-only, `0755`/`0644` read-write, custom `r/w/x` bits with `lstat` verification) strictly restricted to non-root user app & App Group data subpaths (`mobile` owner only; `SystemGroup`/`Bundle`/`Daemon`/`System` blocked).
+   - **Fast Cache Cleaner & Selection Menu (`CacheCleanerView`)**: `.userInitiated` scan queue, per-scan `deniedContainers` cache, POSIX `opendir`/`readdir`/`fstatat` size counting, live progress + Stop button, and `Select All` / `Invert` / `Select None` menu (including hidden entries).
+   - **`iOS 27.3 beta 2+` Patched Sentinel & `27.3 beta 1` Notice (`DeviceInfoHelpers` / `ContentView` / `GestaltView`)**: Accurately distinguishes `27.3 beta 1` (`24C503*`) from `27.3 beta 2+` (`24C504*`+ / `26.7.3+`), displays non-blocking Home & `worse_query` error warnings without force-exiting the app, and shows a read-only `eligibilityd` CN policy notice on `27.3 beta 1`.
+
 ---
 
 ## Compatibility
@@ -73,7 +87,7 @@ This fork builds **Erosion Plus** as `ErosionPlus_v<version>_Bilingual.ipa`.
 
 Build this branch with the **Build IPA** workflow, or use `./ipabuild.sh` with full Xcode and the native build dependencies in [the port notes](./GESTALTX_PORT.md). Keep the distinct Bundle ID and App Group when re-signing. It installs alongside the original app and uses separate app storage and factory-vault filenames. Both apps still operate on the same system configuration.
 
-The sideloading source starts with an empty app list until an independent release is published. Its sync workflow accepts only `ErosionPlus_*_Bilingual.ipa` assets whose embedded Bundle ID matches Erosion Plus; original Erosion packages are excluded.
+Download `ErosionPlus_v0.12.0_Bilingual.ipa` from [Plus Releases](https://github.com/Su-cyber-art/Erosion-CN/releases/latest). SideStore, AltStore and Feather can subscribe to the [Plus source](https://raw.githubusercontent.com/Su-cyber-art/Erosion-CN/main/apps.json), updated automatically after each release.
 
 ---
 
@@ -97,7 +111,7 @@ The sideloading source starts with an empty app list until an independent releas
 - **iOS 27.3 beta on China (`CH/A`) hardware: all slots correct, network fine, still fails**:
   - iOS 27.3 beta 1 added a China-specific AI policy branch. If Photos' local eligibility check (`GenerativeFunctionsFoundation`) detects `CH` hardware from any source, it looks up a "CN region policy" that Apple hasn't published yet, so the request is blocked **before any network traffic**. Log signature: `Eligibility returned no CN region policy on a CH region code device`. The check does not read MobileGestalt's cached `RegionCode` (it triggers even when the Inspector shows `LL`), so **MobileGestalt edits cannot bypass it**. Do not inject uncached keys, which triggers a cache reset at boot. Confirmed in [#13](https://github.com/Kianuni/Erosion-CN/issues/13), [#22](https://github.com/Kianuni/Erosion-CN/issues/22), [#28](https://github.com/Kianuni/Erosion-CN/issues/28).
   - **Fix**: return to **iOS 27.2.x** if Apple still signs it (27.2.1 has no such check). Run **One-Tap Factory Restore** (or **Clean Cache Rebuild**) and back up to a computer first; a 27.3 backup cannot be restored onto 27.2.1. Or stay on 27.3 beta and wait for Apple to change it. Siri chat, Writing Tools, and Camera Control Visual Intelligence (OpenAI / Google) are unaffected.
-- **How to tell them apart**: on a Mac, reproduce the error once, run `sudo log collect --device --last 5m --output ~/Desktop/pcc.logarchive`, then `log show ~/Desktop/pcc.logarchive --style compact --predicate 'process == "privatecloudcomputed" OR process == "modelmanagerd" OR process == "Photos"' | grep -E "1009|Rate limited|region policy|InferenceError"`. `1009` means rate limit; `no CN region policy` means the 27.3 beta check.
+- **How to tell them apart**: on a Mac, reproduce the error once, run `sudo log collect --device --last 5m --output ~/Desktop/pcc.logarchive`, then `log show ~/Desktop/pcc.logarchive --style compact --predicate 'process == "privatecloudcomputed" OR process == "modelmanagerd" OR process == "Photos"' | grep -E "1009|Rate limited|region policy|InferenceError"`. `1009` means rate limit; `no CN region policy` means the 27.3 beta check. Or connect your iPhone over USB to **[AppleLens](https://github.com/Kianuni/AppleLens)** to translate `32033 / 1009 / 27.3 policy` logs automatically without `sudo`.
 
 ### 3. About shows `LL/A`, why haven't Apple Intelligence, Siri, or `Add eSIM` appeared yet?
 1. **Cold Reboot required**: Binary `CacheData` changes (`green-tea = false`) require a **full manual power-off and reboot** (Respring is not enough). Verify in **Live Inspector** that `green-tea` live value is `false (Bool)`.
@@ -111,13 +125,18 @@ The sideloading source starts with an empty app list until an independent releas
 
 ---
 
-## Related Open-Source Projects (Kianuni Ecosystem)
+## Ecosystem
 
-If you find **Erosion-CN** helpful, check out our other open-source iOS tools:
+**Erosion-CN** (Device Enablement), **[AppleFlow](https://github.com/Kianuni/AppleFlow)** (Zero-MitM Routing), and **[AppleLens](https://github.com/Kianuni/AppleLens)** (macOS Observability & USB Diagnostics) form an integrated open-source stack for Apple Intelligence — alongside our other Apple privacy & customization tools:
+
+```text
+  [1. Erosion-CN] Device Enablement ──▶ [2. AppleFlow] Zero-MitM Routing ──▶ [3. AppleLens] macOS Observability · Probe · Report Lens
+```
 
 | Project | Description | Highlights |
 | :--- | :--- | :--- |
 | **[AppleFlow](https://github.com/Kianuni/AppleFlow)** | Zero-MitM routing for Apple Intelligence, PCC, and Siri, paired with a local **[Web Config Doctor & Probe](https://kianuni.github.io/AppleFlow/)** | Surge / Loon / Shadowrocket / Stash / Mihomo / QX / Sing-box |
+| **[AppleLens](https://github.com/Kianuni/AppleLens)** | Zero-MitM, read-only native macOS Tri-State AI Radar, USB iPhone log translator, 4-lane routing/QUIC probe & `Apple_Intelligence_Report.json` viewer | macOS 14.0+ App / CLI / USB iPhone Diagnostics |
 | **[WQGuard](https://github.com/Kianuni/WQGuard)** | 100% read-only iOS sandbox escape scanner, sideloaded IPA auditor & firmware CVE guard | iOS / iPadOS 26.2+ – 27.x security auditing |
 | **[Camlo](https://github.com/Kianuni/Camlo)** | Bring your iPhone lock screen to life: computer-free slide-to-unlock animations, glasses-free 3D & live wallpapers | iOS / iPadOS 26 – 27 lock screen customization |
 | **[Enkard](https://github.com/Kianuni/Enkard)** | Purely offline, zero-cloud encrypted iPhone card vault bound to Apple Secure Enclave hardware | Bank-grade local storage for sensitive cards & credentials |
@@ -128,7 +147,7 @@ If you find **Erosion-CN** helpful, check out our other open-source iOS tools:
 
 - Upstream project: **[jailbreakdotparty/Erosion](https://github.com/jailbreakdotparty/Erosion)** (`lunginspector`, `forcequit`, `0xjohnny`, `Skadz`, `rooootdev`, `neonmodder123`)
 - Exploit: **[forcequitOS/worse_query](https://github.com/forcequitOS/worse_query)**
-- References & Special Thanks: `huamidev (GestaltX)`, `kolbicz (WQFiles)`, `KirbySD`, `PoomSmart (MGKeys)`
+- GPLv3 Credits & References: **[kolbicz / WQFiles](https://github.com/kolbicz/WQFiles)** (`.csstore` container graph research, GPLv3), **[yangokok886 / WCMigrate](https://github.com/yangokok886/WCMigrate)** (APFS `clonefile()` app data staging/migration ideas, GPLv3), `huamidev (GestaltX)`, `KirbySD`, `PoomSmart (MGKeys)`
 - Licensed under **[GPLv3](./LICENSE)**.
 
 ---
